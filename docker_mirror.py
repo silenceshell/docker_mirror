@@ -92,10 +92,10 @@ def get_speed(mirror, mirror_url):
     restart_docker_daemon()
 
     # print "try to delete busybox image."
-    execute_sys_cmd("docker rmi busybox -f 1> /dev/null 2>&1")
+    execute_sys_cmd("docker rmi centos -f 1> /dev/null 2>&1")
     print "pulling centos from {mirror}".format(mirror=mirror)
     begin_time = time.time()
-    execute_sys_cmd("docker pull busybox 1> /dev/null 2>&1")
+    execute_sys_cmd("docker pull centos 1> /dev/null 2>&1")
     end_time = time.time()
 
     cost_time = end_time - begin_time
