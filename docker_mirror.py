@@ -91,15 +91,21 @@ def get_speed(mirror, mirror_url):
     set_docker_config(mirror_url)
     restart_docker_daemon()
 
-    # print "try to delete busybox image."
+    # try to delete busybox image in case.
     execute_sys_cmd("docker rmi centos -f 1> /dev/null 2>&1")
+
     print "pulling centos from {mirror}".format(mirror=mirror)
     begin_time = time.time()
+
     execute_sys_cmd("docker pull centos 1> /dev/null 2>&1")
     end_time = time.time()
 
     cost_time = end_time - begin_time
     print "mirror {mirror} cost time: {cost_time}\n".format(mirror=mirror, cost_time=cost_time)
+
+    # delete centos images every time.
+    execute_sys_cmd("docker rmi centos -f 1> /dev/null 2>&1")
+
     return 204800 / cost_time
 
 if __name__ == "__main__":
