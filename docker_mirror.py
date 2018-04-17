@@ -23,6 +23,10 @@ docker_config_map = {
     "CentOS Linux": {
         "config": "/etc/sysconfig/docker",
         "prefix": "OPTIONS="
+    },
+    "Deepin": {
+        "config": "/etc/default/docker",
+        "prefix": "DOCKER_OPTS="
     }
 }
 
