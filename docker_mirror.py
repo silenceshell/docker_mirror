@@ -5,6 +5,8 @@ import platform
 import re
 import time
 import os
+import docker
+import json
 
 mirror_prefix = "--registry-mirror="
 
@@ -30,6 +32,12 @@ docker_config_map = {
     }
 }
 
+docker_ce_config_map = {
+    "Deepin": {
+        "config": "/etc/docker/daemon.json",
+        # "prefix": "registry-mirror"
+    }
+}
 
 def get_dist():
     return platform.linux_distribution()[0]
@@ -37,6 +45,10 @@ def get_dist():
 
 def get_config(dist):
     return docker_config_map[dist]["config"]
+
+
+def get_config_ce(dist):
+    return docker_ce_config_map[dist]["config"]
 
 
 def get_prefix(dist):
@@ -86,29 +98,50 @@ def set_docker_config(mirror):
         f.write(new_line)
         f.writelines(options)
 
+def set_docker_config_ce(mirror):
+    dist = get_dist()
+    docker_config = get_config_ce(dist)
+    config_dict={}
+    if os.path.exists(docker_config) != True:
+        # if file not exist, create it first.
+        os.mknod(docker_config, 0644)
+    else:
+        with open(docker_config, "r") as f:
+            config_dict = json.load(f)
+
+    config_dict[u'registry-mirrors'] = [mirror]
+
+    with open(docker_config, "w") as f:
+        json.dump(config_dict, f)
 
 def restart_docker_daemon():
     execute_sys_cmd("systemctl restart docker")
 
 
 def get_speed(mirror, mirror_url):
-    set_docker_config(mirror_url)
+    client = docker.from_env()
+    version = client.version()[u'Version']
+    if "ce" in version:
+        set_docker_config_ce(mirror_url)
+    else:
+        set_docker_config(mirror_url)
+    
     restart_docker_daemon()
 
     # try to delete busybox image in case.
-    execute_sys_cmd("docker rmi centos -f 1> /dev/null 2>&1")
+    execute_sys_cmd("docker rmi registry:2 -f 1> /dev/null 2>&1")
 
-    print "pulling centos from {mirror}".format(mirror=mirror)
+    print "pulling registry:2 from {mirror}".format(mirror=mirror)
     begin_time = time.time()
 
-    execute_sys_cmd("docker pull centos 1> /dev/null 2>&1")
+    execute_sys_cmd("docker pull registry:2 1> /dev/null 2>&1")
     end_time = time.time()
 
     cost_time = end_time - begin_time
     print "mirror {mirror} cost time: {cost_time}\n".format(mirror=mirror, cost_time=cost_time)
 
     # delete centos images every time.
-    execute_sys_cmd("docker rmi centos -f 1> /dev/null 2>&1")
+    execute_sys_cmd("docker rmi registry:2 -f 1> /dev/null 2>&1")
 
     return 204800 / cost_time
 
