@@ -11,6 +11,7 @@ import json
 mirror_prefix = "--registry-mirror="
 
 mirrors = {
+    "tencent": "https://mirror.ccs.tencentyun.com",
     "netease": "http://hub-mirror.c.163.com",
     "ustc": "https://docker.mirrors.ustc.edu.cn",
     "official": "https://registry.docker-cn.com",
