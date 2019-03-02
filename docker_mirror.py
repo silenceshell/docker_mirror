@@ -11,6 +11,7 @@ import json
 mirror_prefix = "--registry-mirror="
 
 mirrors = {
+    "azure": "http://dockerhub.azk8s.cn",
     "tencent": "https://mirror.ccs.tencentyun.com",
     "netease": "http://hub-mirror.c.163.com",
     "ustc": "https://docker.mirrors.ustc.edu.cn",
@@ -34,9 +35,11 @@ docker_config_map = {
 }
 
 docker_ce_config_map = {
+    "Ubuntu": {
+        "config": "/etc/docker/daemon.json",
+    },
     "Deepin": {
         "config": "/etc/docker/daemon.json",
-        # "prefix": "registry-mirror"
     }
 }
 
@@ -144,18 +147,32 @@ def get_speed(mirror, mirror_url):
     # delete centos images every time.
     execute_sys_cmd("docker rmi registry:2 -f 1> /dev/null 2>&1")
 
-    return 204800 / cost_time
+    return cost_time
+    #return 204800 / cost_time
 
 if __name__ == "__main__":
+    print "restart docker daemon"
+    restart_docker_daemon()
     max_speed = 0
+    total_time = 0
+    restart_count = 0
     best_mirror = ""
     best_mirror_url = ""
     for k, v in mirrors.items():
-        speed = get_speed(k, v)
+        cost_time = get_speed(k, v)
+        speed = 204800 / cost_time
         if speed > max_speed:
             max_speed = speed
             best_mirror = k
             best_mirror_url = v
+        restart_count += 1
+        total_time += cost_time
+        if restart_count >= 2 and total_time < 60:
+           #to avoid the error of docker daeom: Start request repeated too quickly
+           print "oh.. docker daemon restart too quickly, have a rest"
+           restart_count = 0
+           total_time = 0
+           time.sleep(60-total_time)
 
     print "best mirror is: {mirror}, set docker config and restart docker daemon now.".format(mirror=best_mirror)
     set_docker_config(best_mirror_url)
