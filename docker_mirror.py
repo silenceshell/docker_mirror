@@ -42,6 +42,9 @@ docker_ce_config_map = {
     },
     "Deepin": {
         "config": "/etc/docker/daemon.json",
+    },
+    "Arch": {
+        "config": "/etc/docker/daemon.json",
     }
 }
 
