@@ -1,6 +1,8 @@
 #!/usr/bin/python
 # coding=utf8
 
+from __future__ import print_function
+from __future__ import unicode_literals
 import platform
 import re
 import time
@@ -39,6 +41,9 @@ docker_ce_config_map = {
         "config": "/etc/docker/daemon.json",
     },
     "Deepin": {
+        "config": "/etc/docker/daemon.json",
+    },
+    "Arch": {
         "config": "/etc/docker/daemon.json",
     }
 }
@@ -108,7 +113,7 @@ def set_docker_config_ce(mirror):
     config_dict={}
     if os.path.exists(docker_config) != True:
         # if file not exist, create it first.
-        os.mknod(docker_config, 0644)
+        os.mknod(docker_config, 0o644)
     else:
         with open(docker_config, "r") as f:
             config_dict = json.load(f)
@@ -135,14 +140,14 @@ def get_speed(mirror, mirror_url):
     # try to delete busybox image in case.
     execute_sys_cmd("docker rmi registry:2 -f 1> /dev/null 2>&1")
 
-    print "pulling registry:2 from {mirror}".format(mirror=mirror)
+    print("pulling registry:2 from {mirror}".format(mirror=mirror))
     begin_time = time.time()
 
     execute_sys_cmd("docker pull registry:2 1> /dev/null 2>&1")
     end_time = time.time()
 
     cost_time = end_time - begin_time
-    print "mirror {mirror} cost time: {cost_time}\n".format(mirror=mirror, cost_time=cost_time)
+    print("mirror {mirror} cost time: {cost_time}\n".format(mirror=mirror, cost_time=cost_time))
 
     # delete centos images every time.
     execute_sys_cmd("docker rmi registry:2 -f 1> /dev/null 2>&1")
@@ -151,7 +156,7 @@ def get_speed(mirror, mirror_url):
     #return 204800 / cost_time
 
 if __name__ == "__main__":
-    print "restart docker daemon"
+    print("restart docker daemon")
     restart_docker_daemon()
     max_speed = 0
     total_time = 0
@@ -169,11 +174,11 @@ if __name__ == "__main__":
         total_time += cost_time
         if restart_count >= 2 and total_time < 60:
            #to avoid the error of docker daeom: Start request repeated too quickly
-           print "oh.. docker daemon restart too quickly, have a rest"
+           print("oh.. docker daemon restart too quickly, have a rest")
            restart_count = 0
            total_time = 0
            time.sleep(60-total_time)
 
-    print "best mirror is: {mirror}, set docker config and restart docker daemon now.".format(mirror=best_mirror)
+    print("best mirror is: {mirror}, set docker config and restart docker daemon now.".format(mirror=best_mirror))
     set_docker_config(best_mirror_url)
     restart_docker_daemon()
