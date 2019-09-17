@@ -11,6 +11,7 @@ import docker
 import json
 
 mirror_prefix = "--registry-mirror="
+version = ""
 
 mirrors = {
     "azure": "http://dockerhub.azk8s.cn",
@@ -43,6 +44,9 @@ docker_ce_config_map = {
         "config": "/etc/docker/daemon.json",
     },
     "Arch": {
+        "config": "/etc/docker/daemon.json",
+    },
+    "CentOS Linux": {
         "config": "/etc/docker/daemon.json",
     }
 }
@@ -127,8 +131,6 @@ def restart_docker_daemon():
 
 
 def get_speed(mirror, mirror_url):
-    client = docker.from_env()
-    version = client.version()[u'Version']
     if "ce" in version:
         set_docker_config_ce(mirror_url)
     else:
@@ -162,6 +164,10 @@ if __name__ == "__main__":
     restart_count = 0
     best_mirror = ""
     best_mirror_url = ""
+
+    client = docker.from_env()
+    version = client.version()[u'Version']
+
     for k, v in mirrors.items():
         cost_time = get_speed(k, v)
         speed = 204800 / cost_time
@@ -179,5 +185,8 @@ if __name__ == "__main__":
            time.sleep(60-total_time)
 
     print("best mirror is: {mirror}, set docker config and restart docker daemon now.".format(mirror=best_mirror))
-    set_docker_config(best_mirror_url)
+    if "ce" in version:
+        set_docker_config_ce(best_mirror_url)
+    else:
+        set_docker_config(best_mirror_url)
     restart_docker_daemon()
