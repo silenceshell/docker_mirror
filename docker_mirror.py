@@ -16,6 +16,7 @@ version = ""
 mirrors = {
     "azure": "http://dockerhub.azk8s.cn",
     "tencent": "https://mirror.ccs.tencentyun.com",
+    "daocloud": "http://f1361db2.m.daocloud.io",
     "netease": "http://hub-mirror.c.163.com",
     "ustc": "https://docker.mirrors.ustc.edu.cn",
     "aliyun": "https://2h3po24q.mirror.aliyuncs.com"  # use your own aliyun mirror url instead.
