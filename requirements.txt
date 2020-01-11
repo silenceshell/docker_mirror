@@ -1,4 +1,4 @@
-ansible==2.6.18
+ansible==2.9.2
 apache-libcloud==2.2.1
 asn1crypto==0.24.0
 backports.ssl-match-hostname==3.7.0.1
