@@ -30,6 +30,6 @@ requests==2.18.4
 SecretStorage==2.3.1
 simplejson==3.13.2
 six==1.11.0
-urllib3==1.22
+urllib3==1.24.2
 websocket-client==0.57.0
 xmltodict==0.11.0
