@@ -18,7 +18,7 @@ keyrings.alt==3.0
 lockfile==0.12.2
 MarkupSafe==1.0
 netaddr==0.7.19
-paramiko==2.0.9
+paramiko==2.7.1
 pyasn1==0.4.2
 pycrypto==2.6.1
 pygobject==3.26.1
