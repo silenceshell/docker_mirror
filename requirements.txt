@@ -26,7 +26,7 @@ pykerberos==1.1.14
 pyOpenSSL==17.5.0
 pyxdg==0.25
 PyYAML==3.12
-requests==2.18.4
+requests==2.20.0
 SecretStorage==2.3.1
 simplejson==3.13.2
 six==1.11.0
