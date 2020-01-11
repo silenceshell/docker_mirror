@@ -4,7 +4,7 @@ asn1crypto==0.24.0
 backports.ssl-match-hostname==3.7.0.1
 certifi==2018.1.18
 chardet==3.0.4
-cryptography==2.3
+cryptography==2.8
 docker==4.1.0
 enum34==1.1.6
 gyp==0.1
