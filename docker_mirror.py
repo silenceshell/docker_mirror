@@ -52,6 +52,7 @@ docker_ce_config_map = {
     }
 }
 
+
 def get_dist():
     return platform.linux_distribution()[0]
 
@@ -111,10 +112,11 @@ def set_docker_config(mirror):
         f.write(new_line)
         f.writelines(options)
 
+
 def set_docker_config_ce(mirror):
     dist = get_dist()
     docker_config = get_config_ce(dist)
-    config_dict={}
+    config_dict = {}
     if os.path.exists(docker_config) != True:
         # if file not exist, create it first.
         os.mknod(docker_config, 0o644)
@@ -127,6 +129,7 @@ def set_docker_config_ce(mirror):
     with open(docker_config, "w") as f:
         json.dump(config_dict, f)
 
+
 def restart_docker_daemon():
     execute_sys_cmd("systemctl restart docker")
 
@@ -136,7 +139,7 @@ def get_speed(mirror, mirror_url):
         set_docker_config_ce(mirror_url)
     else:
         set_docker_config(mirror_url)
-    
+
     restart_docker_daemon()
 
     # try to delete busybox image in case.
@@ -155,7 +158,7 @@ def get_speed(mirror, mirror_url):
     execute_sys_cmd("docker rmi registry:2 -f 1> /dev/null 2>&1")
 
     return cost_time
-    #return 204800 / cost_time
+
 
 if __name__ == "__main__":
     print("restart docker daemon")
@@ -179,11 +182,11 @@ if __name__ == "__main__":
         restart_count += 1
         total_time += cost_time
         if restart_count >= 2 and total_time < 60:
-           #to avoid the error of docker daeom: Start request repeated too quickly
-           print("oh.. docker daemon restart too quickly, have a rest")
-           restart_count = 0
-           total_time = 0
-           time.sleep(60-total_time)
+            # to avoid the error of docker daeom: Start request repeated too quickly
+            print("oh.. docker daemon restart too quickly, have a rest")
+            restart_count = 0
+            total_time = 0
+            time.sleep(60 - total_time)
 
     print("best mirror is: {mirror}, set docker config and restart docker daemon now.".format(mirror=best_mirror))
     if "ce" in version:
